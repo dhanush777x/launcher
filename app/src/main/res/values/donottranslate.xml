@@ -115,6 +115,9 @@
 
     <string name="settings_theme_wallpaper_key" translatable="false">theme.wallpaper</string>
     <string name="settings_theme_font_key" translatable="false">theme.font</string>
+    <string name="settings_theme_custom_font_key" translatable="false">theme.custom_font</string>
+    <string name="settings_theme_custom_font_name_key" translatable="false">theme.font.custom_name</string>
+    <string name="settings_theme_custom_font_version_key" translatable="false">theme.font.custom_version</string>
 
     <!-- values of de.jrpie.android.launcher.preferences.theme.Font -->
     <string-array name="settings_theme_font_values" translatable="false">
@@ -124,6 +127,7 @@
         <item>SERIF</item>
         <item>MONOSPACE</item>
         <item>SERIF_MONOSPACE</item>
+        <item>CUSTOM</item>
     </string-array>
 
     <!-- names for @array/settings_theme_font_values -->
@@ -134,6 +138,7 @@
         <item>@string/settings_theme_font_item_serif</item>
         <item>@string/settings_theme_font_item_monospace</item>
         <item>@string/settings_theme_font_item_serif_monospace</item>
+        <item>@string/settings_theme_font_item_custom</item>
     </string-array>
     <string name="settings_theme_icon_pack_key" translatable="false">theme.icon_pack</string>
     <string name="settings_theme_monochrome_icons_key" translatable="false">theme.monochrome_icons</string>
@@ -145,6 +150,9 @@
       -
       -->
     <string name="settings_clock_font_key" translatable="false">clock.font</string>
+    <string name="settings_clock_custom_font_key" translatable="false">clock.custom_font</string>
+    <string name="settings_clock_custom_font_name_key" translatable="false">clock.font.custom_name</string>
+    <string name="settings_clock_custom_font_version_key" translatable="false">clock.font.custom_version</string>
     <string name="settings_clock_color_key" translatable="false">clock.color</string>
     <string name="settings_clock_time_visible_key" translatable="false">clock.time_visible</string>
     <string name="settings_clock_show_seconds_key" translatable="false">clock.show_seconds</string>

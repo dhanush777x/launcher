@@ -13,6 +13,7 @@ import de.jrpie.android.launcher.databinding.SettingsBinding
 import de.jrpie.android.launcher.preferences.LauncherPreferences
 import de.jrpie.android.launcher.preferences.theme.Background
 import de.jrpie.android.launcher.preferences.theme.ColorTheme
+import de.jrpie.android.launcher.preferences.theme.Font
 import de.jrpie.android.launcher.ui.UIObjectActivity
 import de.jrpie.android.launcher.ui.settings.actions.SettingsFragmentActions
 import de.jrpie.android.launcher.ui.settings.launcher.SettingsFragmentLauncher
@@ -46,12 +47,21 @@ class SettingsActivity : UIObjectActivity() {
                     .also { it.putExtra(EXTRA_TAB, 1) }
                 finish()
                 startActivity(i)
-            } else
-                if (prefKey?.startsWith("theme.") == true ||
-                    prefKey?.startsWith("display.") == true
-                ) {
-                    recreate()
-                }
+            } else if (
+                prefKey == getString(R.string.settings_theme_custom_font_version_key) &&
+                LauncherPreferences.theme().font() == Font.CUSTOM
+            ) {
+                // A new custom font file was imported while the custom font was already
+                // active, so the font preference itself did not change. The name key is
+                // intentionally ignored.
+                recreate()
+            } else if (
+                (prefKey?.startsWith("theme.") == true &&
+                        !prefKey.startsWith("theme.font.custom_")) ||
+                prefKey?.startsWith("display.") == true
+            ) {
+                recreate()
+            }
         }
     private lateinit var binding: SettingsBinding
 

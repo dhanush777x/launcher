@@ -137,6 +137,10 @@
     <style name="fontSystemDefault">
     </style>
 
+    <style name="fontCustom">
+        <!-- The custom font is applied programmatically, see CustomFontLayoutInflaterFactory. -->
+    </style>
+
     <style name="fontHack">
         <!-- API<26 does not support custom fonts in XML -->
         <!-- Custom fonts work via AppCompat (but AppCompat is not used everywhere) -->

@@ -4,12 +4,17 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import androidx.preference.DropDownPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,10 +29,24 @@ import de.jrpie.android.launcher.icons.IconPackHandle
 import de.jrpie.android.launcher.icons.loadIconPacks
 import de.jrpie.android.launcher.preferences.LauncherPreferences
 import de.jrpie.android.launcher.preferences.theme.ColorTheme
+import de.jrpie.android.launcher.preferences.theme.CustomFont
+import de.jrpie.android.launcher.preferences.theme.Font
+import de.jrpie.android.launcher.preferences.theme.FontSlot
 import de.jrpie.android.launcher.setDefaultHomeScreen
 import de.jrpie.android.launcher.ui.widgets.manage.ManageWidgetPanelsActivity
 import de.jrpie.android.launcher.ui.widgets.manage.ManageWidgetsActivity
+import kotlinx.coroutines.launch
 
+private val FONT_MIME_TYPES = arrayOf(
+    "font/ttf",
+    "font/otf",
+    "font/opentype",
+    "application/x-font-ttf",
+    "application/x-font-otf",
+    "application/x-font-opentype",
+    "application/vnd.ms-opentype",
+    "application/octet-stream"
+)
 
 /**
  * The [SettingsFragmentLauncher] is a used as a tab in the SettingsActivity.
@@ -70,6 +89,14 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
         }
     }
 
+    // One launcher per slot keeps the result mapping intact across configuration changes.
+    private val themeFontPicker = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> handleFontPickerResult(FontSlot.THEME, uri) }
+
+    private val clockFontPicker = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> handleFontPickerResult(FontSlot.CLOCK, uri) }
 
     private var sharedPreferencesListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, prefKey ->
@@ -122,6 +149,12 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        setupFontPreference(FontSlot.THEME)
+        setupFontPreference(FontSlot.CLOCK)
+        setupCustomFontPreference(FontSlot.THEME)
+        setupCustomFontPreference(FontSlot.CLOCK)
+        refreshCustomFontSummaries()
 
         val selectWallpaper = findPreference<androidx.preference.Preference>(
             LauncherPreferences.theme().keys().wallpaper()
@@ -214,5 +247,122 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
         }
 
         updateVisibility()
+    }
+
+    private fun setupFontPreference(slot: FontSlot) {
+        val preference = findPreference<DropDownPreference>(fontPreferenceKey(slot))
+            ?: return
+
+        preference.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                if (newValue == Font.CUSTOM.name &&
+                    !CustomFont.isAvailable(requireContext(), slot)
+                ) {
+                    launchFontPicker(slot)
+                    false
+                } else {
+                    true
+                }
+            }
+    }
+
+    private fun setupCustomFontPreference(slot: FontSlot) {
+        val key = when (slot) {
+            FontSlot.THEME -> R.string.settings_theme_custom_font_key
+            FontSlot.CLOCK -> R.string.settings_clock_custom_font_key
+        }
+
+        findPreference<Preference>(getString(key))?.setOnPreferenceClickListener {
+            launchFontPicker(slot)
+            true
+        }
+    }
+
+    private fun launchFontPicker(slot: FontSlot) {
+        when (slot) {
+            FontSlot.THEME -> themeFontPicker.launch(FONT_MIME_TYPES)
+            FontSlot.CLOCK -> clockFontPicker.launch(FONT_MIME_TYPES)
+        }
+    }
+
+    private fun handleFontPickerResult(slot: FontSlot, uri: Uri?) {
+        if (uri == null) {
+            restoreFontSelection(slot)
+            return
+        }
+
+        val currentView = view ?: return
+        val appContext = currentView.context.applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            when (val result = CustomFont.import(appContext, slot, uri)) {
+                is CustomFont.ImportResult.Success -> {
+                    if (isAdded) {
+                        refreshCustomFontSummary(slot)
+                        syncFontPreference(slot)
+                    }
+                    Toast.makeText(
+                        appContext,
+                        R.string.settings_custom_font_imported,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                is CustomFont.ImportResult.Failure -> {
+                    if (isAdded) {
+                        restoreFontSelection(slot)
+                    }
+                    Toast.makeText(
+                        appContext,
+                        result.reason.messageRes,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun syncFontPreference(slot: FontSlot) {
+        findPreference<DropDownPreference>(fontPreferenceKey(slot))?.apply {
+            value = currentFont(slot).name
+        }
+    }
+
+    private fun restoreFontSelection(slot: FontSlot) {
+        findPreference<DropDownPreference>(fontPreferenceKey(slot))?.apply {
+            value = currentFont(slot).name
+        }
+    }
+
+    private fun currentFont(slot: FontSlot): Font {
+        return when (slot) {
+            FontSlot.THEME -> LauncherPreferences.theme().font()
+            FontSlot.CLOCK -> LauncherPreferences.clock().font()
+        }
+    }
+
+    private fun fontPreferenceKey(slot: FontSlot): String {
+        return when (slot) {
+            FontSlot.THEME -> LauncherPreferences.theme().keys().font()
+            FontSlot.CLOCK -> LauncherPreferences.clock().keys().font()
+        }
+    }
+
+    private fun refreshCustomFontSummaries() {
+        refreshCustomFontSummary(FontSlot.THEME)
+        refreshCustomFontSummary(FontSlot.CLOCK)
+    }
+
+    private fun refreshCustomFontSummary(slot: FontSlot) {
+        val currentContext = context ?: return
+        val key = when (slot) {
+            FontSlot.THEME -> R.string.settings_theme_custom_font_key
+            FontSlot.CLOCK -> R.string.settings_clock_custom_font_key
+        }
+
+        val summary = CustomFont.displayName(currentContext, slot)
+            ?.takeIf { CustomFont.isAvailable(currentContext, slot) }
+            ?: getString(R.string.settings_custom_font_not_selected)
+
+        findPreference<Preference>(currentContext.getString(key))?.summary = summary
     }
 }

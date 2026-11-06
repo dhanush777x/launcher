@@ -2,6 +2,7 @@ package de.jrpie.android.launcher.ui.widgets
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Typeface
 import android.text.format.DateFormat
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -11,6 +12,7 @@ import androidx.core.view.isVisible
 import de.jrpie.android.launcher.actions.Gesture
 import de.jrpie.android.launcher.databinding.WidgetClockBinding
 import de.jrpie.android.launcher.preferences.LauncherPreferences
+import de.jrpie.android.launcher.preferences.theme.FontSlot
 import de.jrpie.android.launcher.widgets.WidgetPanel
 import java.util.Locale
 
@@ -100,10 +102,10 @@ class ClockView(
         binding.clockUpperView.setTextColor(LauncherPreferences.clock().color())
         binding.clockLowerView.setTextColor(LauncherPreferences.clock().color())
 
-        LauncherPreferences.clock().font().getTypeface(context)?.let {
-            binding.clockUpperView.setTypeface(it)
-            binding.clockLowerView.setTypeface(it)
-        }
+        val clockTypeface = LauncherPreferences.clock().font()
+            .getTypeface(context, FontSlot.CLOCK) ?: Typeface.DEFAULT
+        binding.clockUpperView.setTypeface(clockTypeface)
+        binding.clockLowerView.setTypeface(clockTypeface)
 
         val fontSize = LauncherPreferences.clock().fontSize().toFloat()
         binding.clockUpperView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize)

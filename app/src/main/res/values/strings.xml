@@ -152,8 +152,18 @@
     <string name="settings_theme_font_item_serif">Serif</string>
     <string name="settings_theme_font_item_monospace">Monospace</string>
     <string name="settings_theme_font_item_serif_monospace">Serif monospace</string>
+    <string name="settings_theme_font_item_custom">Custom</string>
     <string name="settings_theme_icon_pack">Icon Pack</string>
     <string name="settings_theme_icon_pack_default">Default Icons</string>
+    <string name="settings_theme_custom_font">Custom UI font file</string>
+    <string name="settings_clock_custom_font">Custom clock font file</string>
+    <string name="settings_custom_font_not_selected">No font file selected</string>
+    <string name="settings_custom_font_imported">Font imported</string>
+    <string name="settings_custom_font_unsupported">Unsupported font file. Choose a TTF or OTF file.</string>
+    <string name="settings_custom_font_too_large">Font file is too large.</string>
+    <string name="settings_custom_font_open_failed">Could not open the selected file.</string>
+    <string name="settings_custom_font_invalid">Could not read the selected font.</string>
+    <string name="settings_custom_font_fallback_name">Custom font</string>
     <string name="settings_theme_monochrome_icons">Monochrome app icons</string>
     <string name="settings_theme_animations">Animations</string>
 

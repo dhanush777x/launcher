@@ -5,12 +5,14 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
 import de.jrpie.android.launcher.Application
+import de.jrpie.android.launcher.R
 import de.jrpie.android.launcher.actions.Action
 import de.jrpie.android.launcher.actions.Gesture
 import de.jrpie.android.launcher.actions.LauncherAction
 import de.jrpie.android.launcher.databinding.ActivityHomeBinding
 import de.jrpie.android.launcher.openTutorial
 import de.jrpie.android.launcher.preferences.LauncherPreferences
+import de.jrpie.android.launcher.preferences.theme.Font
 import de.jrpie.android.launcher.ui.util.LauncherGestureActivity
 
 
@@ -26,6 +28,14 @@ class HomeActivity : UIObject, LauncherGestureActivity() {
     private var sharedPreferencesListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, prefKey ->
             if ( prefKey?.startsWith("display.") == true ) {
+                recreate()
+            } else if (prefKey == LauncherPreferences.theme().keys().font()) {
+                recreate()
+            } else if (prefKey == getString(R.string.settings_theme_custom_font_version_key) &&
+                LauncherPreferences.theme().font() == Font.CUSTOM
+            ) {
+                // A new custom font file was imported while the custom font was already
+                // active, so the font preference itself did not change.
                 recreate()
             } else if (prefKey?.startsWith("action.") == true) {
                 updateSettingsFallbackButtonVisibility()

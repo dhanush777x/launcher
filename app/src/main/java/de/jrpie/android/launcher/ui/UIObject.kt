@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import de.jrpie.android.launcher.preferences.LauncherPreferences
 import de.jrpie.android.launcher.preferences.theme.Background
 import de.jrpie.android.launcher.preferences.theme.ColorTheme
+import de.jrpie.android.launcher.ui.util.applyCustomFontToProgrammaticViews
+import de.jrpie.android.launcher.ui.util.installCustomFontLayoutInflaterFactory
 
 /**
  * An interface implemented by every [Activity], Fragment etc. in Launcher.
@@ -54,6 +56,7 @@ interface UIObject {
             return
         }
         setWindowFlags(window, isHomeScreen())
+        installCustomFontLayoutInflaterFactory()
 
         if (!LauncherPreferences.display().rotateScreen()) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
@@ -63,6 +66,9 @@ interface UIObject {
     fun onStart() {
         setOnClicks()
         adjustLayout()
+        if (this is Activity) {
+            applyCustomFontToProgrammaticViews()
+        }
     }
 
     fun modifyTheme(theme: Resources.Theme): Resources.Theme {
@@ -147,6 +153,8 @@ interface UIObject {
 
 abstract class UIObjectActivity : AppCompatActivity(), UIObject {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Must happen before AppCompat installs its own layout inflater factory.
+        installCustomFontLayoutInflaterFactory()
         super<AppCompatActivity>.onCreate(savedInstanceState)
         super<UIObject>.onCreate()
     }

@@ -19,6 +19,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.toRectF
 import de.jrpie.android.launcher.R
 import de.jrpie.android.launcher.preferences.LauncherPreferences
+import de.jrpie.android.launcher.preferences.theme.FontSlot
 import de.jrpie.android.launcher.widgets.GRID_SIZE
 import de.jrpie.android.launcher.widgets.MIN_WIDGET_SIZE
 import de.jrpie.android.launcher.widgets.Widget
@@ -80,7 +81,7 @@ class WidgetOverlayView : ViewGroup {
         interactionDisabledOverlayTextPaint.textSize = 60f
         interactionDisabledOverlayTextPaint.isAntiAlias = true
         interactionDisabledOverlayTextPaint.typeface =
-            LauncherPreferences.theme().font().getTypeface(context)
+            LauncherPreferences.theme().font().getTypeface(context, FontSlot.THEME)
 
         paint.style = Paint.Style.STROKE
         paint.color = Color.WHITE
