@@ -238,6 +238,7 @@ class AppsRecyclerAdapter(
         when (intention) {
             AbstractListActivity.Companion.Intention.VIEW -> {
                 appInfo.getAction().invoke(activity, rect)
+                activity.finish()
             }
 
             AbstractListActivity.Companion.Intention.PICK -> {
@@ -261,6 +262,7 @@ class AppsRecyclerAdapter(
         ) {
             val app = appsListDisplayed[0]
             app.getAction().invoke(activity)
+            activity.finish()
 
             val inputMethodManager =
                 activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
