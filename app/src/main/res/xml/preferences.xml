@@ -80,6 +80,9 @@
         <de.jrpie.android.launcher.preferences.ColorPreference
             android:key="@string/settings_clock_color_key"
             android:title="@string/settings_clock_color" />
+        <de.jrpie.android.launcher.preferences.ColorPreference
+            android:key="@string/settings_status_bar_color_key"
+            android:title="@string/settings_status_bar_color" />
         <SwitchPreference
             android:key="@string/settings_clock_localized_key"
             android:defaultValue="false"

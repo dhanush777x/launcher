@@ -154,6 +154,7 @@
     <string name="settings_clock_custom_font_name_key" translatable="false">clock.font.custom_name</string>
     <string name="settings_clock_custom_font_version_key" translatable="false">clock.font.custom_version</string>
     <string name="settings_clock_color_key" translatable="false">clock.color</string>
+    <string name="settings_status_bar_color_key" translatable="false">status_bar.color</string>
     <string name="settings_clock_time_visible_key" translatable="false">clock.time_visible</string>
     <string name="settings_clock_show_seconds_key" translatable="false">clock.show_seconds</string>
     <string name="settings_clock_date_visible_key" translatable="false">clock.date_visible</string>

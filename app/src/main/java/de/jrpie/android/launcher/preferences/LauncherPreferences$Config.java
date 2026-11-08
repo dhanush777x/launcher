@@ -72,6 +72,9 @@ import eu.jonahbauer.android.preference.annotations.Preferences;
                         @Preference(name = "show_seconds", type = boolean.class, defaultValue = "true"),
                         @Preference(name = "font_size", type = int.class, defaultValue = "30")
                 }),
+                @PreferenceGroup(name = "status_bar", prefix = "settings_status_bar_", suffix = "_key", value = {
+                        @Preference(name = "color", type = int.class, defaultValue = "0xffffffff"),
+                }),
                 @PreferenceGroup(name = "display", prefix = "settings_display_", suffix = "_key", value = {
                         @Preference(name = "screen_timeout_disabled", type = boolean.class, defaultValue = "false"),
                         @Preference(name = "hide_status_bar", type = boolean.class, defaultValue = "true"),

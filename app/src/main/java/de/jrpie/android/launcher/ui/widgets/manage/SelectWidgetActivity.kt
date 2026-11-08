@@ -22,7 +22,9 @@ import de.jrpie.android.launcher.ui.transformMonochrome
 import de.jrpie.android.launcher.widgets.ClockWidget
 import de.jrpie.android.launcher.widgets.LauncherAppWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherClockWidgetProvider
+import de.jrpie.android.launcher.widgets.LauncherStatusBarWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherWidgetProvider
+import de.jrpie.android.launcher.widgets.StatusBarWidget
 import de.jrpie.android.launcher.widgets.WidgetPanel
 import de.jrpie.android.launcher.widgets.WidgetPosition
 import de.jrpie.android.launcher.widgets.WidgetProviderFilter
@@ -71,6 +73,21 @@ class SelectWidgetActivity : UIObjectActivity() {
                     ClockWidget(
                         generateInternalId(),
                         WidgetPosition(0, 4, 12, 3),
+                        widgetPanelId
+                    )
+                )
+                finish()
+            }
+
+            is LauncherStatusBarWidgetProvider -> {
+                updateWidget(
+                    StatusBarWidget(
+                        generateInternalId(),
+                        WidgetPosition.findFreeSpace(
+                            WidgetPanel.byId(widgetPanelId),
+                            12,
+                            3
+                        ),
                         widgetPanelId
                     )
                 )

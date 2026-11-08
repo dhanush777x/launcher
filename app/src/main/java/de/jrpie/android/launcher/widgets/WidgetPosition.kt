@@ -100,10 +100,10 @@ data class WidgetPosition(var x: Short, var y: Short, var width: Short, var heig
 
             val widgets = widgetPanel.getWidgets().map { it.position.toRect() }
 
-            for (x in 0..<GRID_SIZE - minWidth) {
+            for (x in 0..(GRID_SIZE - minWidth)) {
                 rect.left = x
                 rect.right = x + minWidth
-                for (y in 0..<GRID_SIZE - minHeight) {
+                for (y in 0..(GRID_SIZE - minHeight)) {
                     rect.top = y
                     rect.bottom = y + minHeight
                     if (!widgets.any { Rect(it).intersect(rect) }) {

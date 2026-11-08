@@ -54,3 +54,11 @@ class LauncherClockWidgetProvider(context: Context) : LauncherWidgetProvider(
     AppCompatResources.getDrawable(context, R.drawable.baseline_clock_24),
     null
 )
+
+class LauncherStatusBarWidgetProvider(context: Context) : LauncherWidgetProvider(
+    context.getString(R.string.widget_status_bar_label),
+    context.getString(R.string.widget_status_bar_description),
+    context.getString(R.string.app_name),
+    AppCompatResources.getDrawable(context, R.drawable.baseline_status_bar_24),
+    null
+)

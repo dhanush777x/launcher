@@ -451,6 +451,12 @@
 
     <string name="widget_clock_label">Clock</string>
     <string name="widget_clock_description">The default clock of μLauncher</string>
+    <string name="widget_status_bar_label">Status Bar</string>
+    <string name="widget_status_bar_description">Shows network type and battery level</string>
+    <string name="settings_status_bar_color">Status bar widget color</string>
+    <string name="widget_status_bar_battery_format">%1$d%%</string>
+    <string name="widget_status_bar_network_wifi">WiFi</string>
+    <string name="widget_status_bar_network_mobile">Mobile</string>
     <string name="manage_widget_panels_delete">Delete</string>
     <string name="manage_widget_panels_rename">Rename</string>
 
