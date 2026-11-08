@@ -83,6 +83,9 @@
         <de.jrpie.android.launcher.preferences.ColorPreference
             android:key="@string/settings_status_bar_color_key"
             android:title="@string/settings_status_bar_color" />
+        <de.jrpie.android.launcher.preferences.ColorPreference
+            android:key="@string/settings_now_playing_color_key"
+            android:title="@string/settings_now_playing_color" />
         <SwitchPreference
             android:key="@string/settings_clock_localized_key"
             android:defaultValue="false"
@@ -110,6 +113,10 @@
             android:max="64"
             android:title="@string/settings_clock_font_size"
             app:showSeekBarValue="true" />
+        <Preference
+            android:key="@string/settings_widgets_notification_access_key"
+            android:persistent="false"
+            android:title="@string/settings_widgets_notification_access" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -167,7 +167,7 @@
     <string name="settings_theme_monochrome_icons">Monochrome app icons</string>
     <string name="settings_theme_animations">Animations</string>
 
-    <string name="settings_launcher_section_date_time"><![CDATA[Date & time]]></string>
+    <string name="settings_launcher_section_date_time"><![CDATA[Clock & media]]></string>
     <string name="settings_clock_color">Color</string>
     <string name="settings_clock_font_size">Font size</string>
     <string name="settings_clock_time_visible">Show time</string>
@@ -453,6 +453,15 @@
     <string name="widget_clock_description">The default clock of μLauncher</string>
     <string name="widget_status_bar_label">Status Bar</string>
     <string name="widget_status_bar_description">Shows network type and battery level</string>
+    <string name="widget_now_playing_label">Now Playing</string>
+    <string name="widget_now_playing_description">Shows currently playing media with visualizer and progress</string>
+    <string name="settings_now_playing_color">Now playing widget color</string>
+    <string name="settings_widgets_notification_access">Notification access</string>
+    <string name="settings_widgets_notification_access_dialog_title">Allow notification access?</string>
+    <string name="settings_widgets_notification_access_dialog_message">μLauncher needs notification access to read the song title and playback state from your music player. It does not read your messages or other notifications.</string>
+    <string name="settings_widgets_notification_access_dialog_open">Open settings</string>
+    <string name="settings_widgets_notification_access_granted">Granted</string>
+    <string name="settings_widgets_notification_access_denied">Not granted — tap to enable</string>
     <string name="settings_status_bar_color">Status bar widget color</string>
     <string name="widget_status_bar_battery_format">%1$d%%</string>
     <string name="widget_status_bar_network_wifi">WiFi</string>

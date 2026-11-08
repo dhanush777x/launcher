@@ -153,7 +153,7 @@
       <string name="settings_theme_monochrome_icons">Монохромні іконки застосунків</string>
       <string name="settings_theme_animations">Анімації</string>
 
-    <string name="settings_launcher_section_date_time"><![CDATA[Date & time]]></string>
+    <string name="settings_launcher_section_date_time"><![CDATA[Clock & media]]></string>
     <string name="settings_clock_color">Колір</string>
     <string name="settings_clock_time_visible">Показувати час</string>
     <string name="settings_clock_date_visible">Показувати дату</string>

@@ -27,6 +27,7 @@ import de.jrpie.android.launcher.icons.CustomIconPackHandle
 import de.jrpie.android.launcher.icons.IconPack
 import de.jrpie.android.launcher.icons.IconPackHandle
 import de.jrpie.android.launcher.icons.loadIconPacks
+import de.jrpie.android.launcher.media.NowPlayingListenerService
 import de.jrpie.android.launcher.preferences.LauncherPreferences
 import de.jrpie.android.launcher.preferences.theme.ColorTheme
 import de.jrpie.android.launcher.preferences.theme.CustomFont
@@ -139,6 +140,18 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
         super.onStart()
         LauncherPreferences.getSharedPreferences()
             .registerOnSharedPreferenceChangeListener(sharedPreferencesListener)
+        updateNotificationAccessSummary()
+    }
+
+    private fun updateNotificationAccessSummary() {
+        findPreference<Preference>(getString(R.string.settings_widgets_notification_access_key))
+            ?.summary = getString(
+                if (NowPlayingListenerService.hasAccess(requireContext())) {
+                    R.string.settings_widgets_notification_access_granted
+                } else {
+                    R.string.settings_widgets_notification_access_denied
+                }
+            )
     }
 
     override fun onPause() {
@@ -215,6 +228,24 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
             true
         }
 
+        findPreference<Preference>(getString(R.string.settings_widgets_notification_access_key))
+            ?.setOnPreferenceClickListener {
+                val context = requireContext()
+                if (NowPlayingListenerService.hasAccess(context)) {
+                    startActivity(NowPlayingListenerService.settingsIntent())
+                } else {
+                    AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                        .setTitle(R.string.settings_widgets_notification_access_dialog_title)
+                        .setMessage(R.string.settings_widgets_notification_access_dialog_message)
+                        .setPositiveButton(R.string.settings_widgets_notification_access_dialog_open) { _, _ ->
+                            startActivity(NowPlayingListenerService.settingsIntent())
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                }
+                true
+            }
+
         val hiddenApps = findPreference<androidx.preference.Preference>(
             LauncherPreferences.apps().keys().hidden()
         )
@@ -247,6 +278,7 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
         }
 
         updateVisibility()
+        updateNotificationAccessSummary()
     }
 
     private fun setupFontPreference(slot: FontSlot) {

@@ -62,3 +62,11 @@ class LauncherStatusBarWidgetProvider(context: Context) : LauncherWidgetProvider
     AppCompatResources.getDrawable(context, R.drawable.baseline_status_bar_24),
     null
 )
+
+class LauncherNowPlayingWidgetProvider(context: Context) : LauncherWidgetProvider(
+    context.getString(R.string.widget_now_playing_label),
+    context.getString(R.string.widget_now_playing_description),
+    context.getString(R.string.app_name),
+    AppCompatResources.getDrawable(context, R.drawable.baseline_music_note_24),
+    null
+)

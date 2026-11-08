@@ -106,7 +106,7 @@
     <string name="settings_theme_font_item_monospace">Monoerdvė</string>
     <string name="settings_theme_font_item_serif_monospace">Serifo monospace</string>
     <string name="settings_theme_monochrome_icons">Vienspalvių programų piktogramos</string>
-    <string name="settings_launcher_section_date_time"><![CDATA[Date & time]]></string>
+    <string name="settings_launcher_section_date_time"><![CDATA[Clock & media]]></string>
     <string name="settings_clock_color">Spalva</string>
     <string name="settings_clock_time_visible">Rodyti laiką</string>
     <string name="settings_clock_date_visible">Rodyti datą</string>

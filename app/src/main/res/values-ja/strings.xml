@@ -80,7 +80,7 @@
     <string name="settings_theme_font">フォント</string>
     <string name="settings_theme_font_item_system_default">システムデフォルト</string>
     <string name="settings_theme_monochrome_icons">モノクロのアプリアイコン</string>
-    <string name="settings_launcher_section_date_time"><![CDATA[Date & time]]></string>
+    <string name="settings_launcher_section_date_time"><![CDATA[Clock & media]]></string>
     <string name="settings_clock_color">色</string>
     <string name="settings_clock_time_visible">時刻を表示</string>
     <string name="settings_clock_date_visible">日付を表示</string>
