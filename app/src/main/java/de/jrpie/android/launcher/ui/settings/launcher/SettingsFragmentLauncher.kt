@@ -136,6 +136,10 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
         hidePausedApps?.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
     }
 
+    private fun weatherLocationSummary(value: String? = LauncherPreferences.weather().location()): String =
+        value?.takeIf { it.isNotBlank() }
+            ?: getString(R.string.settings_weather_location_automatic)
+
     override fun onStart() {
         super.onStart()
         LauncherPreferences.getSharedPreferences()
@@ -245,6 +249,16 @@ class SettingsFragmentLauncher : PreferenceFragmentCompat() {
                 }
                 true
             }
+
+        findPreference<androidx.preference.EditTextPreference>(
+            LauncherPreferences.weather().keys().location()
+        )?.apply {
+            summary = weatherLocationSummary()
+            setOnPreferenceChangeListener { preference, newValue ->
+                preference.summary = weatherLocationSummary(newValue as? String)
+                true
+            }
+        }
 
         val hiddenApps = findPreference<androidx.preference.Preference>(
             LauncherPreferences.apps().keys().hidden()

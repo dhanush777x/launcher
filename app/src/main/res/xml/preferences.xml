@@ -86,6 +86,14 @@
         <de.jrpie.android.launcher.preferences.ColorPreference
             android:key="@string/settings_now_playing_color_key"
             android:title="@string/settings_now_playing_color" />
+        <EditTextPreference
+            android:key="@string/settings_weather_location_key"
+            android:title="@string/settings_weather_location"
+            android:dialogMessage="@string/settings_weather_location_dialog"
+            android:defaultValue="" />
+        <de.jrpie.android.launcher.preferences.ColorPreference
+            android:key="@string/settings_weather_color_key"
+            android:title="@string/settings_weather_color" />
         <SwitchPreference
             android:key="@string/settings_clock_localized_key"
             android:defaultValue="false"

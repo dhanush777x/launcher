@@ -70,3 +70,11 @@ class LauncherNowPlayingWidgetProvider(context: Context) : LauncherWidgetProvide
     AppCompatResources.getDrawable(context, R.drawable.baseline_music_note_24),
     null
 )
+
+class LauncherWeatherWidgetProvider(context: Context) : LauncherWidgetProvider(
+    context.getString(R.string.widget_weather_label),
+    context.getString(R.string.widget_weather_description),
+    context.getString(R.string.app_name),
+    AppCompatResources.getDrawable(context, R.drawable.baseline_cloud_24),
+    null
+)

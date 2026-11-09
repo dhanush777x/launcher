@@ -156,6 +156,19 @@
     <string name="settings_clock_color_key" translatable="false">clock.color</string>
     <string name="settings_status_bar_color_key" translatable="false">status_bar.color</string>
     <string name="settings_now_playing_color_key" translatable="false">now_playing.color</string>
+    <string name="settings_weather_location_key" translatable="false">weather.location</string>
+    <string name="settings_weather_color_key" translatable="false">weather.color</string>
+    <string name="widget_weather_high_format" translatable="false">H %1$s</string>
+    <string name="widget_weather_low_format" translatable="false">L %1$s</string>
+    <string name="widget_weather_condition_sunny" translatable="false">SUNNY</string>
+    <string name="widget_weather_condition_partly_cloudy" translatable="false">PARTLY CLOUDY</string>
+    <string name="widget_weather_condition_cloudy" translatable="false">CLOUDY</string>
+    <string name="widget_weather_condition_rain" translatable="false">RAIN</string>
+    <string name="widget_weather_condition_heavy_rain" translatable="false">HEAVY RAIN</string>
+    <string name="widget_weather_condition_thunderstorm" translatable="false">THUNDERSTORM</string>
+    <string name="widget_weather_condition_snow" translatable="false">SNOW</string>
+    <string name="widget_weather_condition_sleet" translatable="false">SLEET</string>
+    <string name="widget_weather_condition_fog" translatable="false">FOG</string>
     <string name="settings_widgets_notification_access_key" translatable="false">widgets.notification_access</string>
     <string name="settings_clock_time_visible_key" translatable="false">clock.time_visible</string>
     <string name="settings_clock_show_seconds_key" translatable="false">clock.show_seconds</string>

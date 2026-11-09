@@ -24,9 +24,11 @@ import de.jrpie.android.launcher.widgets.LauncherAppWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherClockWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherNowPlayingWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherStatusBarWidgetProvider
+import de.jrpie.android.launcher.widgets.LauncherWeatherWidgetProvider
 import de.jrpie.android.launcher.widgets.LauncherWidgetProvider
 import de.jrpie.android.launcher.widgets.NowPlayingWidget
 import de.jrpie.android.launcher.widgets.StatusBarWidget
+import de.jrpie.android.launcher.widgets.WeatherWidget
 import de.jrpie.android.launcher.widgets.WidgetPanel
 import de.jrpie.android.launcher.widgets.WidgetPosition
 import de.jrpie.android.launcher.widgets.WidgetProviderFilter
@@ -99,6 +101,21 @@ class SelectWidgetActivity : UIObjectActivity() {
             is LauncherNowPlayingWidgetProvider -> {
                 updateWidget(
                     NowPlayingWidget(
+                        generateInternalId(),
+                        WidgetPosition.findFreeSpace(
+                            WidgetPanel.byId(widgetPanelId),
+                            12,
+                            3
+                        ),
+                        widgetPanelId
+                    )
+                )
+                finish()
+            }
+
+            is LauncherWeatherWidgetProvider -> {
+                updateWidget(
+                    WeatherWidget(
                         generateInternalId(),
                         WidgetPosition.findFreeSpace(
                             WidgetPanel.byId(widgetPanelId),

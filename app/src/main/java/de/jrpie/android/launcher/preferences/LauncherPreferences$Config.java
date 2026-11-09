@@ -78,6 +78,10 @@ import eu.jonahbauer.android.preference.annotations.Preferences;
                 @PreferenceGroup(name = "now_playing", prefix = "settings_now_playing_", suffix = "_key", value = {
                         @Preference(name = "color", type = int.class, defaultValue = "0xffffffff"),
                 }),
+                @PreferenceGroup(name = "weather", prefix = "settings_weather_", suffix = "_key", value = {
+                        @Preference(name = "location", type = String.class, defaultValue = ""),
+                        @Preference(name = "color", type = int.class, defaultValue = "0xffffffff"),
+                }),
                 @PreferenceGroup(name = "display", prefix = "settings_display_", suffix = "_key", value = {
                         @Preference(name = "screen_timeout_disabled", type = boolean.class, defaultValue = "false"),
                         @Preference(name = "hide_status_bar", type = boolean.class, defaultValue = "true"),

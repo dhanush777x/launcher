@@ -57,7 +57,8 @@ fun getAppWidgetProviders(context: Context): List<LauncherWidgetProvider> {
     val list = mutableListOf<LauncherWidgetProvider>(
         LauncherClockWidgetProvider(context),
         LauncherStatusBarWidgetProvider(context),
-        LauncherNowPlayingWidgetProvider(context)
+        LauncherNowPlayingWidgetProvider(context),
+        LauncherWeatherWidgetProvider(context)
     )
     val appWidgetManager = context.getAppWidgetManager()
     val profiles =
