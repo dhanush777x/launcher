@@ -3,7 +3,9 @@ package de.jrpie.android.launcher.ui.list
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.window.OnBackInvokedDispatcher
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +25,10 @@ import kotlinx.coroutines.launch
 /**
  * The [AppListActivity] is used to view all apps and edit their settings.
  * The activity itself can also be chosen to be launched as an action.
+ *
+ * Open uses a slide-up window transition from the bottom edge; home screen fades out
+ * gradually. Close is an instant finish() with no exit animation (matches original).
+ * The keyboard opens based on the "Start keyboard for search" setting.
  */
 class AppListActivity : AbstractListActivity() {
     override val intention = Companion.Intention.VIEW
@@ -65,15 +71,17 @@ class AppListActivity : AbstractListActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // App drawer slides up from the bottom edge; home screen fades out gradually
+        overridePendingTransition(R.anim.slide_up_from_bottom, R.anim.fade_out_background)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackInvokedDispatcher.registerOnBackInvokedCallback(
                 OnBackInvokedDispatcher.PRIORITY_OVERLAY
             ) {
-                finish()
+                finishWithSpring()
             }
         }
 
@@ -81,6 +89,27 @@ class AppListActivity : AbstractListActivity() {
         binding = ActivityListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         useSoftInputResizeWorkaround(binding.listContainer)
+
+        // SearchView lives in the fragment's view
+        binding.root.post {
+            val fragment = supportFragmentManager.findFragmentById(R.id.list_fragment_container)
+            val searchView = fragment?.view?.findViewById<SearchView>(R.id.list_apps_searchview)
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+            // Collapse search bar and hide keyboard until drawer opens
+            searchView?.clearFocus()
+            searchView?.isIconified = true
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+
+            // Auto-open keyboard if setting enabled
+            if (LauncherPreferences.functionality().searchAutoOpenKeyboard()) {
+                searchView?.isIconified = false
+                searchView?.requestFocus()
+                binding.root.postDelayed({
+                    imm.showSoftInput(searchView, InputMethodManager.SHOW_IMPLICIT)
+                }, 200)
+            }
+        }
 
         binding.listSettings.setOnClickListener {
             LauncherAction.SETTINGS.launch(this@AppListActivity)
@@ -108,6 +137,15 @@ class AppListActivity : AbstractListActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        finishWithSpring()
+    }
+
+    private fun finishWithSpring() {
+        // Close drawer immediately - no exit animation (same as original)
+        finish()
+    }
+
     fun updateTitle() {
         val titleResource =
             if (hiddenVisibility == AppFilter.Companion.AppSetVisibility.EXCLUSIVE) {
@@ -123,11 +161,11 @@ class AppListActivity : AbstractListActivity() {
     }
 
     override fun setOnClicks() {
-        binding.listClose.setOnClickListener { finish() }
+        binding.listClose.setOnClickListener { finishWithSpring() }
         binding.listLock.setOnClickListener {
             togglePrivateSpaceLock(this)
             if (privateSpaceVisibility == AppFilter.Companion.AppSetVisibility.EXCLUSIVE) {
-                finish()
+                finishWithSpring()
             }
         }
     }

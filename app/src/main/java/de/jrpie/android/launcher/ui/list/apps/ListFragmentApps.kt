@@ -16,6 +16,7 @@ import de.jrpie.android.launcher.R
 import de.jrpie.android.launcher.apps.AppFilter
 import de.jrpie.android.launcher.databinding.ListAppsBinding
 import de.jrpie.android.launcher.preferences.LauncherPreferences
+import de.jrpie.android.launcher.preferences.list.ListLayout
 import de.jrpie.android.launcher.ui.UIObject
 import de.jrpie.android.launcher.ui.applyKeyboardSettings
 import de.jrpie.android.launcher.ui.list.AbstractListActivity
@@ -92,17 +93,28 @@ class ListFragmentApps : Fragment(), UIObject {
 
 
         // set up the list / recycler
-        binding.listAppsRview.apply {
-            // improve performance (since content changes don't change the layout size)
-            setHasFixedSize(true)
-            layoutManager = LauncherPreferences.list().layout().layoutManager(context)
-                .also {
+        val layoutManager = when (val layout = LauncherPreferences.list().layout()) {
+            ListLayout.GRID, ListLayout.GRID_ONLY_ICONS -> {
+                layout.layoutManager(requireContext()).also {
                     if (LauncherPreferences.list().reverseLayout()) {
-                        (it as? LinearLayoutManager)?.reverseLayout = true
                         (it as? GridLayoutManager)?.reverseLayout = true
                     }
                 }
+            }
+            else -> LinearLayoutManager(requireContext()).also {
+                if (LauncherPreferences.list().reverseLayout()) {
+                    it.reverseLayout = true
+                }
+            }
+        }
+
+        binding.listAppsRview.apply {
+            // improve performance (since content changes don't change the layout size)
+            setHasFixedSize(true)
+            this.layoutManager = layoutManager
             adapter = appsRecyclerAdapter
+            // Disable default ItemAnimator to prevent jumpy/overlapping animations during filtering
+            itemAnimator = null
         }
 
         binding.listAppsSearchview.setOnQueryTextListener(object :
@@ -162,8 +174,7 @@ class ListFragmentApps : Fragment(), UIObject {
             (activity as? AppListActivity)?.updateTitle()
         }
 
-        applyKeyboardSettings(requireActivity(), binding.listAppsRview, binding.listAppsSearchview,
-        listActivity.intention == AbstractListActivity.Companion.Intention.VIEW)
+        applyKeyboardSettings(requireActivity(), binding.listAppsRview, binding.listAppsSearchview, false)
     }
 
 }
