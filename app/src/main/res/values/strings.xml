@@ -459,8 +459,9 @@
     <string name="widget_weather_description">Compact weather with current temperature, condition, and today\'s high and low</string>
     <string name="settings_now_playing_color">Now playing widget color</string>
     <string name="settings_weather_location">Weather location</string>
-    <string name="settings_weather_location_dialog">Enter a city or place name, or leave empty to detect automatically.</string>
-    <string name="settings_weather_location_automatic">Automatic (based on network)</string>
+    <string name="settings_weather_location_dialog">Enter a city or place name.</string>
+    <string name="settings_weather_location_automatic">Not set</string>
+    <string name="widget_weather_location_placeholder">Set location</string>
     <string name="settings_weather_color">Weather widget color</string>
     <string name="settings_widgets_notification_access">Notification access</string>
     <string name="settings_widgets_notification_access_dialog_title">Allow notification access?</string>

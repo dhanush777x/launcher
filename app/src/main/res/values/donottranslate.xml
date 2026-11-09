@@ -169,6 +169,16 @@
     <string name="widget_weather_condition_snow" translatable="false">SNOW</string>
     <string name="widget_weather_condition_sleet" translatable="false">SLEET</string>
     <string name="widget_weather_condition_fog" translatable="false">FOG</string>
+    <string name="widget_weather_condition_mainly_clear" translatable="false">MAINLY CLEAR</string>
+    <string name="widget_weather_condition_overcast" translatable="false">OVERCAST</string>
+    <string name="widget_weather_condition_drizzle" translatable="false">DRIZZLE</string>
+    <string name="widget_weather_condition_freezing_drizzle" translatable="false">FREEZING DRIZZLE</string>
+    <string name="widget_weather_condition_freezing_rain" translatable="false">FREEZING RAIN</string>
+    <string name="widget_weather_condition_heavy_snow" translatable="false">HEAVY SNOW</string>
+    <string name="widget_weather_condition_snow_grains" translatable="false">SNOW GRAINS</string>
+    <string name="widget_weather_condition_showers" translatable="false">SHOWERS</string>
+    <string name="widget_weather_condition_snow_showers" translatable="false">SNOW SHOWERS</string>
+    <string name="widget_weather_condition_thunderstorm_hail" translatable="false">THUNDERSTORM HAIL</string>
     <string name="settings_widgets_notification_access_key" translatable="false">widgets.notification_access</string>
     <string name="settings_clock_time_visible_key" translatable="false">clock.time_visible</string>
     <string name="settings_clock_show_seconds_key" translatable="false">clock.show_seconds</string>

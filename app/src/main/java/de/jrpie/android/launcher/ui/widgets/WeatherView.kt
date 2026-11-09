@@ -30,13 +30,7 @@ import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-/**
- * Compact three-column weather widget.
- *
- * The last successful response is read from [WeatherCache] immediately, so the
- * widget is useful offline. Network refreshes happen at most every
- * [REFRESH_INTERVAL_MS] and never on the main thread. All content is static.
- */
+/** Compact three-column weather widget. */
 class WeatherView(
     context: Context,
     attrs: AttributeSet? = null,
@@ -75,14 +69,13 @@ class WeatherView(
                     post {
                         applyStyle()
                         if (key == LauncherPreferences.weather().keys().location()) {
-                            // Never present the previous city's weather as if it
-                            // belonged to the newly selected location.
+                            // Don't show the previous city's weather after a location change.
                             if (snapshot?.queryLocation != currentQuery()) {
                                 snapshot = null
                                 condition = null
                                 render()
                             }
-                            refresh(force = true)
+                            refresh(force = true, preferCache = false)
                         }
                     }
                 }
@@ -170,8 +163,14 @@ class WeatherView(
     // ---- rendering --------------------------------------------------------
 
     private fun loadCache() {
-        val cached = WeatherCache.load(context) ?: return
-        if (cached.queryLocation != currentQuery()) return
+        val cached = WeatherCache.load(context)
+        if (cached == null || cached.queryLocation != currentQuery()) {
+            // Never keep the previous city's data after a reattach or cache reset.
+            snapshot = null
+            condition = null
+            render()
+            return
+        }
         snapshot = cached
         condition = cached.condition
         render()
@@ -179,9 +178,27 @@ class WeatherView(
 
     private fun render() {
         val snapshot = snapshot
+        val query = currentQuery()
+
+        if (snapshot == null && query.isEmpty()) {
+            binding.currentTempText.text = formatTemp(null)
+            binding.locationText.text = context.getString(R.string.widget_weather_location_placeholder)
+            binding.highTempText.text = context.getString(
+                R.string.widget_weather_high_format,
+                formatTemp(null)
+            )
+            binding.lowTempText.text = context.getString(
+                R.string.widget_weather_low_format,
+                formatTemp(null)
+            )
+            binding.weatherIcon.visibility = View.INVISIBLE
+            binding.conditionText.visibility = View.INVISIBLE
+            return
+        }
+
         binding.currentTempText.text = formatTemp(snapshot?.currentTemp)
         binding.locationText.text =
-            snapshot?.location?.uppercase(Locale.getDefault()) ?: "--"
+            snapshot?.location?.uppercase(Locale.ROOT) ?: "--"
         binding.highTempText.text = context.getString(
             R.string.widget_weather_high_format,
             formatTemp(snapshot?.highTemp)
@@ -196,9 +213,6 @@ class WeatherView(
         if (condition != null) {
             binding.weatherIcon.setImageResource(condition.iconRes)
             binding.conditionText.text = context.getString(condition.labelRes)
-        } else {
-            // Keep the centre column's footprint while there is nothing to show.
-            binding.conditionText.text = "--"
         }
         binding.weatherIcon.visibility = if (hasCondition) View.VISIBLE else View.INVISIBLE
         binding.conditionText.visibility = if (hasCondition) View.VISIBLE else View.INVISIBLE
@@ -236,8 +250,7 @@ class WeatherView(
         binding.lowTempText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sideSize)
         binding.conditionText.setTextSize(TypedValue.COMPLEX_UNIT_SP, conditionSize)
 
-        // Give both text columns identical row heights so the temperature and the
-        // high/low values line up horizontally.
+        // Match row heights so the temperature and high/low columns line up.
         val firstRow = maxOf(
             lineHeightPx(typeface, tempSize),
             lineHeightPx(typeface, sideSize)
@@ -278,22 +291,28 @@ class WeatherView(
         }
     }
 
-    private fun refresh(force: Boolean = false) {
+    /**
+     * [force] skips the freshness check. [preferCache] may reuse another widget's
+     * snapshot; explicit location changes pass false.
+     */
+    private fun refresh(force: Boolean = false, preferCache: Boolean = true) {
         if (fetching || !attached || !windowVisible) return
 
         val query = currentQuery()
+        if (query.isEmpty()) return
 
-        // Multiple weather widgets share one cache; use a fresh snapshot from
-        // another instance instead of issuing a duplicate request.
-        val cached = WeatherCache.load(context)
-        if (cached != null && cached.queryLocation == query && !isStale(cached, query)) {
-            val current = snapshot
-            if (current == null || cached.updatedAt > current.updatedAt) {
-                snapshot = cached
-                condition = cached.condition
-                render()
+        if (preferCache) {
+            // Reuse a fresh snapshot written by another widget.
+            val cached = WeatherCache.load(context)
+            if (cached != null && cached.queryLocation == query && !isStale(cached, query)) {
+                val current = snapshot
+                if (current == null || cached.updatedAt > current.updatedAt) {
+                    snapshot = cached
+                    condition = cached.condition
+                    render()
+                }
+                return
             }
-            return
         }
 
         if (!force && !isStale(snapshot, query)) return
@@ -305,11 +324,17 @@ class WeatherView(
             val result = WeatherFetcher.fetch(appContext, query)
             mainHandler.post {
                 fetching = false
-                if (!attached || result == null) return@post
+                if (!attached) return@post
+
+                if (result == null) {
+                    // Location changed while this request was in flight; retry now.
+                    if (currentQuery() != query) refresh(force = true, preferCache = false)
+                    return@post
+                }
 
                 if (result.queryLocation != currentQuery()) {
-                    // The location setting changed while this request was in flight.
-                    refresh(force = true)
+                    // Location changed while this request was in flight.
+                    refresh(force = true, preferCache = false)
                     return@post
                 }
 
@@ -324,18 +349,14 @@ class WeatherView(
     private fun isStale(snapshot: WeatherSnapshot?, query: String): Boolean {
         if (snapshot == null || snapshot.queryLocation != query) return true
         val age = System.currentTimeMillis() - snapshot.updatedAt
-        // A future timestamp means the clock moved backwards; refresh rather
-        // than keeping the cache alive until the clock catches up.
+        // A negative age means the clock moved backwards; refresh.
         return age < 0L || age >= REFRESH_INTERVAL_MS
     }
 
     private fun currentQuery(): String =
         LauncherPreferences.weather().location().orEmpty().trim()
 
-    /**
-     * Runs the next refresh exactly when the current snapshot reaches
-     * [REFRESH_INTERVAL_MS], rather than a full interval after every resume.
-     */
+    /** Schedules the next refresh for when the current snapshot expires. */
     private fun scheduleRefresh() {
         stopRefreshTicker()
         if (!attached || !windowVisible) return
@@ -351,7 +372,7 @@ class WeatherView(
     }
 
     private fun nextRefreshDelay(): Long {
-        // While a request is in flight, retrying immediately would spin.
+        // Avoid spinning while a request is in flight.
         if (fetching) return REFRESH_INTERVAL_MS
 
         val snapshot = snapshot ?: return 0L

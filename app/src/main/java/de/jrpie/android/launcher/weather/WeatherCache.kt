@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 
-/**
- * Small persistent cache for the last successful weather request. It lives in a
- * separate preferences file so it never interferes with launcher settings.
- */
+/** Persistent cache of the last successful weather response. */
 object WeatherCache {
 
     private const val TAG = "WeatherCache"
@@ -20,6 +17,7 @@ object WeatherCache {
     private const val KEY_CONDITION = "condition"
     private const val KEY_UPDATED_AT = "updated_at"
     private const val KEY_QUERY_LOCATION = "query_location"
+    private const val KEY_CACHE_SCHEMA = "cache_schema"
     private const val MISSING_TEMP = Int.MIN_VALUE
 
     private fun preferences(context: Context): SharedPreferences =
@@ -28,6 +26,16 @@ object WeatherCache {
     fun load(context: Context): WeatherSnapshot? {
         return try {
             val preferences = preferences(context)
+            val storedVersion = preferences.getLong(KEY_CACHE_SCHEMA, -1L)
+
+            if (storedVersion != WEATHER_SCHEMA_VERSION) {
+                // Discard data from an older schema; stamp the current one so this runs once.
+                preferences.edit {
+                    clear()
+                    putLong(KEY_CACHE_SCHEMA, WEATHER_SCHEMA_VERSION)
+                }
+                return null
+            }
             if (!preferences.contains(KEY_UPDATED_AT)) return null
 
             val updatedAt = preferences.getLong(KEY_UPDATED_AT, 0L)
@@ -46,7 +54,7 @@ object WeatherCache {
                 queryLocation = preferences.getString(KEY_QUERY_LOCATION, "").orEmpty()
             )
         } catch (e: Exception) {
-            // A corrupt or outdated cache must never take down the home screen.
+            // Never let a corrupt cache take down the widget.
             Log.w(TAG, "Could not read weather cache", e)
             null
         }
@@ -54,6 +62,7 @@ object WeatherCache {
 
     fun save(context: Context, snapshot: WeatherSnapshot) {
         preferences(context).edit {
+            putLong(KEY_CACHE_SCHEMA, WEATHER_SCHEMA_VERSION)
             putInt(KEY_CURRENT_TEMP, snapshot.currentTemp ?: MISSING_TEMP)
             putInt(KEY_HIGH_TEMP, snapshot.highTemp ?: MISSING_TEMP)
             putInt(KEY_LOW_TEMP, snapshot.lowTemp ?: MISSING_TEMP)
